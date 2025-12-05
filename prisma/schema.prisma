@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. User Model
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String   @map("full_name") @db.VarChar(255)
+  email         String   @unique @db.VarChar(255)
+  password_hash String   @db.Text
+  role          String   @db.VarChar(50)
+  avatar_url    String?  @db.Text
+  created_at    DateTime @default(now())
+
+  nutritionistProfile Nutritionist?
+  clientProfile       ClientProfile?
+  clientAppointments  Appointment[] @relation("ClientAppointments")
+  nutriAppointments   Appointment[] @relation("NutriAppointments")
+  clientMealPlans     MealPlan[]    @relation("ClientMealPlans")
+  nutriMealPlans      MealPlan[]    @relation("NutriMealPlans")
+  givenReviews        Review[]      @relation("GivenReviews")
+  receivedReviews     Review[]      @relation("ReceivedReviews")
+
+  @@map("users")
+}
+
+// 2. Nutritionist Model (UPDATED WITH VERIFICATION FIELDS)
+model Nutritionist {
+  id                Int      @id @default(autoincrement())
+  userId            Int      @unique @map("user_id")
+  specialty         String   @map("specializations") @db.VarChar(255)
+  bio               String?  @db.Text
+  experience_years  Int      @default(0)
+  hourly_rate       Decimal  @db.Decimal(10, 2)
+  rating            Decimal  @default(5.0) @db.Decimal(3, 2)
+  
+  // --- Verification Fields ---
+  is_verified         Boolean  @default(false)
+  verification_status String   @default("pending") @db.VarChar(20) // pending, submitted, verified, rejected
+  kndi_document_url   String?  @db.Text
+  // ---------------------------
+  license_expires_at  DateTime?
+
+  total_reviews     Int      @default(0)
+  certifications    String?  @db.Text
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  user              User     @relation(fields: [userId], references: [id])
+  availability      AvailabilitySlot[]
+
+  @@map("nutritionist_profiles")
+}
+
+// 3. Client Profile Model
+model ClientProfile {
+  id                  Int      @id @default(autoincrement())
+  userId              Int      @unique @map("user_id")
+  bio                 String?  @db.Text
+  goals               String?  @db.Text
+  dietary_preferences String?  @map("dietary_preferences") @db.Text
+  health_conditions   String?  @map("health_conditions") @db.Text
+  location            String?  @db.VarChar(255)
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  user                User     @relation(fields: [userId], references: [id])
+
+  @@map("client_profiles")
+}
+
+// 4. Appointment Model
+model Appointment {
+  id               Int      @id @default(autoincrement())
+  client_id        Int
+  nutritionist_id  Int
+  scheduled_at     DateTime
+  duration_minutes Int      @default(60)
+  price            Decimal  @db.Decimal(10, 2)
+  notes            String?  @db.Text
+  status           String   @default("pending") @db.VarChar(50)
+// --- NEW FIELD ---
+  meeting_link     String?  @db.Text  // For Google Meet / Zoom links
+  // -----------------
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  client           User     @relation("ClientAppointments", fields: [client_id], references: [id])
+  nutritionist     User     @relation("NutriAppointments", fields: [nutritionist_id], references: [id])
+
+  @@map("appointments")
+}
+
+// 5. Meal Plan Model
+model MealPlan {
+  id              Int      @id @default(autoincrement())
+  nutritionist_id Int
+  client_id       Int
+  title           String   @db.VarChar(255)
+  content         String?  @db.Text
+  file_url        String?  @db.Text
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  nutritionist    User     @relation("NutriMealPlans", fields: [nutritionist_id], references: [id])
+  client          User     @relation("ClientMealPlans", fields: [client_id], references: [id])
+
+  @@map("meal_plans")
+}
+
+// 6. Review Model
+model Review {
+  id              Int      @id @default(autoincrement())
+  client_id       Int
+  nutritionist_id Int
+  rating          Int
+  comment         String?  @db.Text
+  created_at      DateTime @default(now())
+
+  client          User     @relation("GivenReviews", fields: [client_id], references: [id])
+  nutritionist    User     @relation("ReceivedReviews", fields: [nutritionist_id], references: [id])
+
+  @@map("reviews")
+}
+
+// 7. Availability Slot Model
+model AvailabilitySlot {
+  id              Int      @id @default(autoincrement())
+  nutritionist_id Int
+  start_time      DateTime
+  end_time        DateTime
+  is_available    Boolean  @default(true)
+  created_at      DateTime @default(now())
+
+  nutritionist    Nutritionist @relation(fields: [nutritionist_id], references: [userId])
+
+  @@map("availability_slots")
+}
