@@ -29,7 +29,7 @@ export async function GET() {
       select: { client_id: true }
     })
 
-    // FIX: Added ": any" to 'a' to solve the build error
+    // FIX 1: Already fixed (Added ': any' to 'a')
     const clientIds = distinctClientIds.map((a: any) => a.client_id)
     
     const clients = await db.user.findMany({
@@ -38,7 +38,8 @@ export async function GET() {
     })
 
     // 3. Map data for Frontend
-    const formattedPlans = plans.map(plan => ({
+    // FIX 2: Added ': any' to 'plan' (This would have crashed next!)
+    const formattedPlans = plans.map((plan: any) => ({
       ...plan,
       // Map 'content' -> 'instructions' for frontend compatibility if needed, 
       // or just send content directly. Let's send content.
@@ -49,7 +50,8 @@ export async function GET() {
       }
     }))
 
-    const formattedClients = clients.map(client => ({
+    // FIX 3: Added ': any' to 'client' (This also needed a fix)
+    const formattedClients = clients.map((client: any) => ({
       ...client,
       full_name: client.name 
     }))
