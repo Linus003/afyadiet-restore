@@ -29,8 +29,9 @@ export async function GET() {
       orderBy: { scheduled_at: 'desc' }
     })
 
-    // Calculate Total
-    const totalEarned = history.reduce((sum, item) => sum + Number(item.price), 0)
+    // 💡 TYPE FIX APPLIED HERE:
+    // We explicitly tell TypeScript that 'sum' is a number and 'item' is any
+    const totalEarned = history.reduce((sum: number, item: any) => sum + Number(item.price), 0)
 
     return NextResponse.json({ 
       history: history.map(item => ({
