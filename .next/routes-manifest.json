@@ -1,0 +1,449 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/admin/pages/[id]",
+      "regex": "^/admin/pages/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin/pages/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/admin/pages/[id]",
+      "regex": "^/api/admin/pages/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/admin/pages/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/appointments/[id]",
+      "regex": "^/api/appointments/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/appointments/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/nutritionists/[id]",
+      "regex": "^/api/nutritionists/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/nutritionists/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/client/booking/[id]",
+      "regex": "^/client/booking/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/client/booking/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/uploads/[filename]",
+      "regex": "^/uploads/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPfilename": "nxtPfilename"
+      },
+      "namedRegex": "^/uploads/(?<nxtPfilename>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/[slug]",
+      "regex": "^/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/(?<nxtPslug>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/about",
+      "regex": "^/about(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/about(?:/)?$"
+    },
+    {
+      "page": "/account/settings",
+      "regex": "^/account/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/settings(?:/)?$"
+    },
+    {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/admin/finance",
+      "regex": "^/admin/finance(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/finance(?:/)?$"
+    },
+    {
+      "page": "/admin/pages",
+      "regex": "^/admin/pages(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/pages(?:/)?$"
+    },
+    {
+      "page": "/admin/settings",
+      "regex": "^/admin/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/settings(?:/)?$"
+    },
+    {
+      "page": "/admin/users",
+      "regex": "^/admin/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/users(?:/)?$"
+    },
+    {
+      "page": "/admin/verifications",
+      "regex": "^/admin/verifications(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/verifications(?:/)?$"
+    },
+    {
+      "page": "/api/admin/metrics",
+      "regex": "^/api/admin/metrics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/metrics(?:/)?$"
+    },
+    {
+      "page": "/api/admin/pages",
+      "regex": "^/api/admin/pages(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/pages(?:/)?$"
+    },
+    {
+      "page": "/api/admin/settings",
+      "regex": "^/api/admin/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/settings(?:/)?$"
+    },
+    {
+      "page": "/api/admin/stats",
+      "regex": "^/api/admin/stats(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/stats(?:/)?$"
+    },
+    {
+      "page": "/api/admin/uploads",
+      "regex": "^/api/admin/uploads(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/uploads(?:/)?$"
+    },
+    {
+      "page": "/api/admin/users",
+      "regex": "^/api/admin/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/users(?:/)?$"
+    },
+    {
+      "page": "/api/admin/verifications",
+      "regex": "^/api/admin/verifications(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/verifications(?:/)?$"
+    },
+    {
+      "page": "/api/auth/login",
+      "regex": "^/api/auth/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/login(?:/)?$"
+    },
+    {
+      "page": "/api/auth/logout",
+      "regex": "^/api/auth/logout(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/logout(?:/)?$"
+    },
+    {
+      "page": "/api/auth/me",
+      "regex": "^/api/auth/me(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/me(?:/)?$"
+    },
+    {
+      "page": "/api/auth/signup",
+      "regex": "^/api/auth/signup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/signup(?:/)?$"
+    },
+    {
+      "page": "/api/auth/verify",
+      "regex": "^/api/auth/verify(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/verify(?:/)?$"
+    },
+    {
+      "page": "/api/bookings/confirm",
+      "regex": "^/api/bookings/confirm(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/bookings/confirm(?:/)?$"
+    },
+    {
+      "page": "/api/bookings/create-checkout",
+      "regex": "^/api/bookings/create\\-checkout(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/bookings/create\\-checkout(?:/)?$"
+    },
+    {
+      "page": "/api/change-password",
+      "regex": "^/api/change\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/change\\-password(?:/)?$"
+    },
+    {
+      "page": "/api/client/appointments",
+      "regex": "^/api/client/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/client/appointments(?:/)?$"
+    },
+    {
+      "page": "/api/client/meal-plans",
+      "regex": "^/api/client/meal\\-plans(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/client/meal\\-plans(?:/)?$"
+    },
+    {
+      "page": "/api/client/profile",
+      "regex": "^/api/client/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/client/profile(?:/)?$"
+    },
+    {
+      "page": "/api/health",
+      "regex": "^/api/health(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/health(?:/)?$"
+    },
+    {
+      "page": "/api/mpesa/callback",
+      "regex": "^/api/mpesa/callback(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/mpesa/callback(?:/)?$"
+    },
+    {
+      "page": "/api/nutritionist/appointments",
+      "regex": "^/api/nutritionist/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/nutritionist/appointments(?:/)?$"
+    },
+    {
+      "page": "/api/nutritionist/availability",
+      "regex": "^/api/nutritionist/availability(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/nutritionist/availability(?:/)?$"
+    },
+    {
+      "page": "/api/nutritionist/earnings",
+      "regex": "^/api/nutritionist/earnings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/nutritionist/earnings(?:/)?$"
+    },
+    {
+      "page": "/api/nutritionist/earnings/history",
+      "regex": "^/api/nutritionist/earnings/history(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/nutritionist/earnings/history(?:/)?$"
+    },
+    {
+      "page": "/api/nutritionist/meal-plans",
+      "regex": "^/api/nutritionist/meal\\-plans(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/nutritionist/meal\\-plans(?:/)?$"
+    },
+    {
+      "page": "/api/nutritionist/profile",
+      "regex": "^/api/nutritionist/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/nutritionist/profile(?:/)?$"
+    },
+    {
+      "page": "/api/nutritionist/submit-verification",
+      "regex": "^/api/nutritionist/submit\\-verification(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/nutritionist/submit\\-verification(?:/)?$"
+    },
+    {
+      "page": "/api/nutritionists",
+      "regex": "^/api/nutritionists(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/nutritionists(?:/)?$"
+    },
+    {
+      "page": "/api/public/nutritionists",
+      "regex": "^/api/public/nutritionists(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/public/nutritionists(?:/)?$"
+    },
+    {
+      "page": "/api/reviews",
+      "regex": "^/api/reviews(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/reviews(?:/)?$"
+    },
+    {
+      "page": "/api/search/nutritionists",
+      "regex": "^/api/search/nutritionists(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/search/nutritionists(?:/)?$"
+    },
+    {
+      "page": "/browse",
+      "regex": "^/browse(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/browse(?:/)?$"
+    },
+    {
+      "page": "/client/appointments",
+      "regex": "^/client/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/client/appointments(?:/)?$"
+    },
+    {
+      "page": "/client/dashboard",
+      "regex": "^/client/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/client/dashboard(?:/)?$"
+    },
+    {
+      "page": "/client/meal-plans",
+      "regex": "^/client/meal\\-plans(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/client/meal\\-plans(?:/)?$"
+    },
+    {
+      "page": "/client/profile",
+      "regex": "^/client/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/client/profile(?:/)?$"
+    },
+    {
+      "page": "/how-it-works",
+      "regex": "^/how\\-it\\-works(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/how\\-it\\-works(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/nutritionist/appointments",
+      "regex": "^/nutritionist/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/nutritionist/appointments(?:/)?$"
+    },
+    {
+      "page": "/nutritionist/availability",
+      "regex": "^/nutritionist/availability(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/nutritionist/availability(?:/)?$"
+    },
+    {
+      "page": "/nutritionist/dashboard",
+      "regex": "^/nutritionist/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/nutritionist/dashboard(?:/)?$"
+    },
+    {
+      "page": "/nutritionist/meal-plans",
+      "regex": "^/nutritionist/meal\\-plans(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/nutritionist/meal\\-plans(?:/)?$"
+    },
+    {
+      "page": "/nutritionist/profile",
+      "regex": "^/nutritionist/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/nutritionist/profile(?:/)?$"
+    },
+    {
+      "page": "/nutritionist/verify",
+      "regex": "^/nutritionist/verify(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/nutritionist/verify(?:/)?$"
+    },
+    {
+      "page": "/signup",
+      "regex": "^/signup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/signup(?:/)?$"
+    },
+    {
+      "page": "/test-payment",
+      "regex": "^/test\\-payment(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/test\\-payment(?:/)?$"
+    },
+    {
+      "page": "/verify",
+      "regex": "^/verify(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/verify(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

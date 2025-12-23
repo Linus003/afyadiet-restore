@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/nutritionist/layout,_N_T_/nutritionist/verify/layout,_N_T_/nutritionist/verify/page,_N_T_/nutritionist/verify"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/nutritionist/verify/__PAGE__",
+    "/nutritionist/verify",
+    "/nutritionist",
+    "/_index",
+    "/_head"
+  ]
+}

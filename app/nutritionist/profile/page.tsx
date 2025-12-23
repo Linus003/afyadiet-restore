@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge" 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Camera, AlertCircle, CheckCircle, Upload } from "lucide-react"
+import { Camera, AlertCircle, CheckCircle, Upload, MapPin } from "lucide-react" // Added MapPin
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 const SPECIALIZATION_OPTIONS = [
@@ -19,6 +19,16 @@ const SPECIALIZATION_OPTIONS = [
   "Diabetes Management", "Gut Health", "Vegan/Vegetarian", "General Wellness",
   "Maternal Health", "Eating Disorders", "Renal Nutrition", "Ketogenic Diet"
 ]
+
+const KENYA_COUNTIES = [
+  "Nairobi", "Mombasa", "Kisumu", "Nakuru", "Uasin Gishu", "Meru", "Kiambu",
+  "Machakos", "Kajiado", "Nyeri", "Kilifi", "Garissa", "Embu", "Kakamega",
+  "Bungoma", "Kitui", "Makueni", "Murang'a", "Kirinyaga", "Kisii", "Nyamira",
+  "Kericho", "Bomet", "Nandi", "Trans Nzoia", "Turkana", "Marsabit", "Isiolo",
+  "Mandera", "Wajir", "Tana River", "Lamu", "Taita Taveta", "Kwale", "Nyandarua",
+  "Laikipia", "Narok", "Samburu", "West Pokot", "Elgeyo Marakwet", "Baringo",
+  "Vihiga", "Busia", "Siaya", "Homa Bay", "Migori", "Tharaka-Nithi"
+];
 
 export default function NutritionistProfilePage() {
   const router = useRouter()
@@ -39,7 +49,8 @@ export default function NutritionistProfilePage() {
     certifications: "",
     yearsExperience: 0,
     hourlyRate: 0,
-    avatarUrl: "", // Holds the image data
+    avatarUrl: "",
+    county: "", // <--- NEW FIELD
   })
 
   // 1. Fetch Data
@@ -59,7 +70,7 @@ export default function NutritionistProfilePage() {
         }
 
         if (data.profile) {
-          setIsVerified(data.profile.is_verified) // ? SET VERIFICATION STATUS
+          setIsVerified(data.profile.is_verified)
           setUserName(data.profile.full_name)
           
           // Handle specializations parsing
@@ -78,6 +89,7 @@ export default function NutritionistProfilePage() {
             yearsExperience: data.profile.years_experience || 0,
             hourlyRate: data.profile.hourly_rate || 0,
             avatarUrl: data.profile.avatar_url || "",
+            county: data.profile.county || "", // <--- Load Saved County
           })
         }
       } catch (err: any) {
@@ -121,6 +133,12 @@ export default function NutritionistProfilePage() {
 
   // 4. Save Data
   const handleSave = async () => {
+    if (!formData.county) {
+      setError("Please select your practicing county.");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     setSaving(true)
     setError(null)
     setSuccess(null)
@@ -163,7 +181,7 @@ export default function NutritionistProfilePage() {
         <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-bold text-foreground">My Professional Profile</h1>
             
-            {/* ? DYNAMIC BADGE LOGIC */}
+            {/* DYNAMIC BADGE LOGIC */}
             {isVerified ? (
                 <Badge className="bg-blue-600 hover:bg-blue-700 text-white gap-1 px-3 py-1">
                     <CheckCircle className="w-4 h-4" /> Verified Nutritionist
@@ -231,6 +249,26 @@ export default function NutritionistProfilePage() {
             </CardHeader>
             <CardContent className="space-y-6">
                 
+                {/* 📍 NEW: COUNTY SELECTOR */}
+                <div className="bg-green-50/50 p-4 rounded-lg border border-green-100">
+                  <Label htmlFor="county" className="flex items-center gap-2 mb-2 font-bold text-green-900">
+                    <MapPin className="w-4 h-4 text-green-600"/> Practicing County
+                  </Label>
+                  <select
+                    id="county"
+                    required
+                    value={formData.county}
+                    onChange={(e) => setFormData({ ...formData, county: e.target.value })}
+                    className="w-full p-2 rounded-md border border-input bg-background text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="">-- Select Your Location --</option>
+                    {KENYA_COUNTIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-muted-foreground mt-1">Clients will find you based on this location.</p>
+                </div>
+
                 {/* BIO */}
                 <div className="space-y-2">
                 <Label htmlFor="bio">Bio</Label>

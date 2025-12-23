@@ -1,47 +1,54 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import prisma from "@/lib/prisma"; // Import Prisma to fetch settings
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+// Configure fonts correctly
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
-export const metadata: Metadata = {
-  title: "AfyaDiet - Connect with Nutritionists",
-  description: "Personalized nutrition and wellness plans from certified nutritionists",
-  generator: "v0.app",
-  icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/apple-icon.png",
-  },
+// CHANGE: Async Metadata Generation (Fetches from Database)
+export async function generateMetadata(): Promise<Metadata> {
+  // 1. Fetch the Global Settings from your DB
+  const settings = await prisma.globalSettings.findFirst();
+
+  // 2. Define defaults in case nothing is saved yet
+  const siteTitle = settings?.siteName || "AfyaDiet - Connect with Nutritionists";
+  const favicon = settings?.faviconUrl || "/icon.svg"; // Fallback to default
+
+  return {
+    title: siteTitle,
+    description: "Personalized nutrition and wellness plans from certified nutritionists",
+    generator: "AfyaDiet Platform",
+    icons: {
+      icon: favicon, // Uses the uploaded image if available
+      shortcut: favicon,
+      apple: "/apple-icon.png", // You can make this dynamic too if needed
+    },
+  };
 }
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <body
+        className={`${geist.variable} ${geistMono.variable} font-sans antialiased`}
+      >
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           {children}
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

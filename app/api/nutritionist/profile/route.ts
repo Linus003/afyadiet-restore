@@ -4,16 +4,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import fs from "fs"
 import path from "path"
 
-// Increase limit for PDF uploads in case they are large
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
-}
-
-// 💡 HELPER: Convert Base64 String to a Physical File
+// ? HELPER: Convert Base64 String to a Physical File
 const saveFile = (base64String: string, userId: number) => {
   try {
     // 1. If it's already a URL (not base64), just return it
@@ -80,7 +71,9 @@ export async function GET() {
         avatar_url: profile.user.avatar_url, 
         years_experience: profile.experience_years,
         // Send expiry date to frontend
-        license_expires_at: profile.license_expires_at
+        license_expires_at: profile.license_expires_at,
+        // ? NEW: Send the saved county back to the frontend
+        county: profile.county 
       }
     })
   } catch (error: any) {
@@ -102,13 +95,14 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { bio, specializations, certifications, yearsExperience, hourlyRate, avatarUrl, kndiDocumentUrl, licenseExpiresAt } = body
+    // ? NEW: Extract 'county' from the incoming request
+    const { bio, specializations, certifications, yearsExperience, hourlyRate, avatarUrl, kndiDocumentUrl, licenseExpiresAt, county } = body
 
     if (!bio || bio.length < 10) {
       return NextResponse.json({ error: "Bio is too short. Please write at least 10 characters." }, { status: 400 })
     }
     
-    // 💡 HERE IS THE FIX: Convert the Base64 doc to a File URL
+    // Convert the Base64 doc to a File URL
     const cleanDocUrl = kndiDocumentUrl ? saveFile(kndiDocumentUrl, userId) : null;
 
     const specialtyString = Array.isArray(specializations) 
@@ -132,7 +126,9 @@ export async function PUT(request: NextRequest) {
           certifications,
           experience_years: parseInt(yearsExperience || 0), 
           hourly_rate: parseFloat(hourlyRate || 0),
-          // Save the clean URL (e.g., /uploads/file.pdf), NOT the huge base64 string
+          // ? NEW: Update the County field
+          county: county || null,
+          
           kndi_document_url: cleanDocUrl,
           license_expires_at: licenseExpiresAt ? new Date(licenseExpiresAt) : null,
           verification_status: cleanDocUrl ? "submitted" : "pending"
@@ -145,7 +141,9 @@ export async function PUT(request: NextRequest) {
           experience_years: parseInt(yearsExperience || 0), 
           hourly_rate: parseFloat(hourlyRate || 0),
           is_verified: false,
-          // Save the clean URL here too
+          // ? NEW: Save the County field on creation
+          county: county || null,
+
           kndi_document_url: cleanDocUrl,
           license_expires_at: licenseExpiresAt ? new Date(licenseExpiresAt) : null,
           verification_status: cleanDocUrl ? "submitted" : "pending"

@@ -1,0 +1,196 @@
+[00:00:04.529] Server  LOG      ✓ Ready in 3.5s
+[00:00:05.111] Server  WARN     ⚠ Cross origin request detected from afyadietsolutions.co.ke to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[00:00:12.416] Server  LOG      ○ Compiling / ...
+[00:00:21.313] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:21.704] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head headCacheNode={{lazyData:null, ...}}>
+                    <__next_viewport_boundary__>
+                    <Next.Metadata>
+                      <div
+                        hidden={true}
+-                       bis_skin_checked="1"
+                      >
+                    ...
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" suppressHydrationWarning={true}>
+                          <body
+                            className="font-sans antialiased"
+-                           __processed_04caaf93-bb95-4c64-bf3b-326082c16cf4__="true"
+-                           bis_register="W3sibWFzdGVyIjp0cnVlLCJleHRlbnNpb25JZCI6InBwaGdkYmdsZGxtaWNmZGtob25kbGFma2lv..."
+                          >
+                            ...
+                              <SegmentViewNode type="page" pagePath="page.tsx">
+                                <SegmentTrieNode>
+                                <Home>
+                                  <main className="min-h-scre...">
+                                    <nav className="flex items...">
+                                      <div
+                                        className="text-2xl font-bold text-primary"
+-                                       bis_skin_checked="1"
+                                      >
++                                       AfyaDiet
+                                      <div
+                                        className="flex gap-4"
+-                                       bis_skin_checked="1"
+                                      >
+                                    <section className="flex flex-...">
+                                      <h1>
+                                      <p>
+                                      <div
+                                        className="flex gap-4"
+-                                       bis_skin_checked="1"
+                                      >
+                                    <section className="grid grid-...">
+                                      <div
+                                        className="bg-card rounded-lg p-6 border border-border flex flex-col items-cen..."
+-                                       bis_skin_checked="1"
+                                      >
+                                        <div
+                                          className="mb-4 p-3 bg-primary/10 rounded-full"
+-                                         bis_skin_checked="1"
+                                        >
+                                        ...
+                                      <div
+                                        className="bg-card rounded-lg p-6 border border-border flex flex-col items-cen..."
+-                                       bis_skin_checked="1"
+                                      >
+                                        <div
+                                          className="mb-4 p-3 bg-primary/10 rounded-full"
+-                                         bis_skin_checked="1"
+                                        >
+                                        ...
+                                      <div
+                                        className="bg-card rounded-lg p-6 border border-border flex flex-col items-cen..."
+-                                       bis_skin_checked="1"
+                                      >
+                                        <div
+                                          className="mb-4 p-3 bg-primary/10 rounded-full"
+-                                         bis_skin_checked="1"
+                                        >
+                                        ...
+                                    ...
+                  ...
+
+[00:16:33.005] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:16:33.005] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head headCacheNode={{lazyData:null, ...}}>
+                    <__next_viewport_boundary__>
+                    <Next.Metadata>
+                      <div
+                        hidden={true}
+-                       bis_skin_checked="1"
+                      >
+                    ...
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en" suppressHydrationWarning={true}>
+                          <body
+                            className="font-sans antialiased"
+-                           __processed_f32ddfdb-7926-4a3b-8eb1-6b962049d0d7__="true"
+-                           bis_register="W3sibWFzdGVyIjp0cnVlLCJleHRlbnNpb25JZCI6InBwaGdkYmdsZGxtaWNmZGtob25kbGFma2lv..."
+                          >
+                            ...
+                              <SegmentViewNode type="page" pagePath="page.tsx">
+                                <SegmentTrieNode>
+                                <Home>
+                                  <main className="min-h-scre...">
+                                    <nav className="flex items...">
+                                      <div
+                                        className="text-2xl font-bold text-primary"
+-                                       bis_skin_checked="1"
+                                      >
++                                       AfyaDiet
+                                      <div
+                                        className="flex gap-4"
+-                                       bis_skin_checked="1"
+                                      >
+                                    <section className="flex flex-...">
+                                      <h1>
+                                      <p>
+                                      <div
+                                        className="flex gap-4"
+-                                       bis_skin_checked="1"
+                                      >
+                                    <section className="grid grid-...">
+                                      <div
+                                        className="bg-card rounded-lg p-6 border border-border flex flex-col items-cen..."
+-                                       bis_skin_checked="1"
+                                      >
+                                        <div
+                                          className="mb-4 p-3 bg-primary/10 rounded-full"
+-                                         bis_skin_checked="1"
+                                        >
+                                        ...
+                                      <div
+                                        className="bg-card rounded-lg p-6 border border-border flex flex-col items-cen..."
+-                                       bis_skin_checked="1"
+                                      >
+                                        <div
+                                          className="mb-4 p-3 bg-primary/10 rounded-full"
+-                                         bis_skin_checked="1"
+                                        >
+                                        ...
+                                      <div
+                                        className="bg-card rounded-lg p-6 border border-border flex flex-col items-cen..."
+-                                       bis_skin_checked="1"
+                                      >
+                                        <div
+                                          className="mb-4 p-3 bg-primary/10 rounded-full"
+-                                         bis_skin_checked="1"
+                                        >
+                                        ...
+                                    ...
+                  ...
+

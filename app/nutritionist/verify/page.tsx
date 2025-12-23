@@ -1,100 +1,146 @@
-"use client"
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Upload, CheckCircle, AlertCircle, FileText, Loader2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { NutritionistNav } from "@/components/nutritionist-nav";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+export default function VerifyAccount() {
+  const router = useRouter();
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
-export default function VerifyPage() {
-  const [file, setFile] = useState<File | null>(null)
-  const [uploading, setUploading] = useState(false)
-  const [status, setStatus] = useState("pending")
-  const router = useRouter()
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      setError("");
+    }
+  };
 
-  useEffect(() => {
-    // Check current status
-    fetch("/api/nutritionist/profile")
-      .then(res => res.json())
-      .then(data => {
-        if (data.profile) {
-          if (data.profile.verification_status === 'verified') {
-            router.push("/nutritionist/dashboard") // Already verified? Go to dashboard.
-          }
-          setStatus(data.profile.verification_status)
-        }
-      })
-  }, [router])
+  const handleUpload = async () => {
+    if (!file) {
+      setError("Please select a PDF file first.");
+      return;
+    }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!file) return alert("Please select a file")
-
-    setUploading(true)
-    const formData = new FormData()
-    formData.append("kndi_document", file)
+    setUploading(true);
+    setError("");
 
     try {
+      // 1. Create FormData
+      const formData = new FormData();
+      formData.append("kndi_document", file); 
+
+      // 2. Prepare Headers
+      // We try to get the token, but we DO NOT stop if it's missing.
+      const token = localStorage.getItem('token');
+      const headers: Record<string, string> = {};
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      // 3. Send to API
       const res = await fetch("/api/nutritionist/submit-verification", {
         method: "POST",
-        body: formData,
-      })
-      
-      if (res.ok) {
-        setStatus("submitted")
-        alert("Document uploaded successfully!")
-      } else {
-        alert("Upload failed. Please try again.")
-      }
-    } catch (err) {
-      console.error(err)
-      alert("Error uploading file.")
-    } finally {
-      setUploading(false)
-    }
-  }
+        body: formData, 
+        headers: headers,
+        credentials: 'include', // <--- THIS IS THE CRITICAL FIX
+      });
 
-  if (status === "submitted") {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <div className="bg-white p-8 rounded shadow max-w-md w-full text-center">
-          <div className="text-5xl mb-4">⏳</div>
-          <h1 className="text-2xl font-bold mb-2">Verification Pending</h1>
-          <p className="text-gray-600">Your documents are under review by the Admin.</p>
-          <button onClick={() => window.location.reload()} className="mt-6 text-blue-600 underline">Check Status</button>
-        </div>
-      </div>
-    )
-  }
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Upload failed");
+      }
+
+      setSuccess(true);
+      setTimeout(() => router.push("/nutritionist/dashboard"), 2000);
+
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
-        <h1 className="text-2xl font-bold mb-2">Verify Your Account</h1>
-        <p className="text-gray-600 mb-6 text-sm">
-          Please upload your <strong>KNDI Certificate (PDF)</strong> to activate your nutritionist profile.
-        </p>
+    <div className="min-h-screen bg-gray-50">
+      <NutritionistNav />
+      <div className="container mx-auto max-w-lg mt-20 px-4">
+        <Card className="shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold">Verify Your Account</CardTitle>
+            <CardDescription>
+              Upload your KNDI Certificate (PDF) to activate your nutritionist profile.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            
+            {success ? (
+              <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-lg text-center">
+                <CheckCircle className="w-12 h-12 mx-auto mb-3 text-green-600" />
+                <h3 className="font-bold text-lg">Submission Received!</h3>
+                <p>Your document is being reviewed. Redirecting...</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Upload Box */}
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center bg-white hover:bg-gray-50 transition">
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    id="file-upload"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="file-upload" className="cursor-pointer block">
+                    {file ? (
+                      <div className="flex flex-col items-center text-blue-600">
+                        <FileText className="w-10 h-10 mb-2" />
+                        <span className="font-medium underline">{file.name}</span>
+                        <span className="text-xs text-gray-500 mt-1">Click to change</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center text-gray-500">
+                        <Upload className="w-10 h-10 mb-2" />
+                        <span className="font-medium">Click to select PDF</span>
+                        <span className="text-xs mt-1">Max size: 4MB</span>
+                      </div>
+                    )}
+                  </label>
+                </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:bg-gray-50 transition cursor-pointer relative">
-            <input 
-              type="file" 
-              accept="application/pdf"
-              required
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-            <p className="text-sm text-gray-500">
-              {file ? `Selected: ${file.name}` : "Click to select PDF file"}
-            </p>
-          </div>
-          
-          <button 
-            type="submit" 
-            disabled={uploading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50"
-          >
-            {uploading ? "Uploading..." : "Submit Verification"}
-          </button>
-        </form>
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                <Button 
+                  onClick={handleUpload} 
+                  disabled={uploading || !file} 
+                  className="w-full bg-blue-600 hover:bg-blue-700 py-6 text-lg"
+                >
+                  {uploading ? (
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...</>
+                  ) : (
+                    "Submit Verification"
+                  )}
+                </Button>
+              </div>
+            )}
+
+          </CardContent>
+        </Card>
       </div>
     </div>
-  )
+  );
 }

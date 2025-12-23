@@ -1,50 +1,108 @@
-import { getSessionFromCookie } from "@/lib/session"
-import { db } from "@/lib/db"
-import { type NextRequest, NextResponse } from "next/server"
-import { writeFile, mkdir } from "fs/promises"
-import path from "path"
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma"; 
+import { cookies } from "next/headers";
+import { verify } from "jsonwebtoken";
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const session = await getSessionFromCookie()
-    if (!session || session.role !== "nutritionist") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    // ============================================================
+    // 1. AUTHENTICATION CHECK (Fixed for 'session' cookie)
+    // ============================================================
+    const cookieStore = await cookies(); 
+    let tokenValue: string | undefined;
+
+    // A. Priority 1: Check Authorization Header (Bearer)
+    const authHeader = request.headers.get("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      tokenValue = authHeader.split(" ")[1];
     }
 
-    const formData = await request.formData()
-    const file = formData.get("kndi_document") as File
+    // B. Priority 2: Check the 'session' Cookie (Based on your Screenshot)
+    if (!tokenValue) {
+      // Your screenshots show the cookie is named "session"
+      const sessionCookie = cookieStore.get("session");
+      if (sessionCookie) {
+        tokenValue = sessionCookie.value;
+      } 
+      // Fallback: Check 'auth_token' just in case
+      else if (cookieStore.get("auth_token")) {
+        tokenValue = cookieStore.get("auth_token")?.value;
+      }
+    }
+
+    // C. If still missing, fail
+    if (!tokenValue) {
+      console.log("DEBUG: Auth failed. Cookies found:", cookieStore.getAll().map(c => c.name));
+      return NextResponse.json(
+        { error: "Unauthorized: No token found. (Looked for 'session' cookie)" }, 
+        { status: 401 }
+      );
+    }
+
+    let userId: number;
+    try {
+      const decoded: any = verify(tokenValue, process.env.JWT_SECRET || "secret");
+      userId = parseInt(decoded.userId);
+    } catch (e) {
+      console.error("Token verification failed:", e);
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    // ============================================================
+    // 2. PARSE FORM DATA
+    // ============================================================
+    const formData = await request.formData();
+    const file = formData.get("kndi_document") as File;
 
     if (!file) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 })
+      return NextResponse.json(
+        { error: "No file uploaded. Please ensure you selected a PDF." }, 
+        { status: 400 }
+      );
     }
 
-    // Prepare file path
-    const buffer = Buffer.from(await file.arrayBuffer())
-    // Create a unique filename
-    const filename = `kndi_${session.userId}_${Date.now()}.pdf`
+    // ============================================================
+    // 3. SAVE FILE
+    // ============================================================
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const safeName = file.name.replace(/\s+/g, "_");
+    const filename = `kndi_${userId}_${Date.now()}_${safeName}`;
+    const uploadDir = path.join(process.cwd(), "public/uploads");
     
-    // Save to public/uploads folder
-    const uploadDir = path.join(process.cwd(), "public/uploads")
-    await mkdir(uploadDir, { recursive: true })
-    const filePath = path.join(uploadDir, filename)
+    try {
+      await mkdir(uploadDir, { recursive: true });
+      await writeFile(path.join(uploadDir, filename), buffer);
+    } catch (fsError) {
+      console.error("File System Error:", fsError);
+      return NextResponse.json(
+        { error: "Server failed to write file to disk." }, 
+        { status: 500 }
+      );
+    }
 
-    // Write file to disk
-    await writeFile(filePath, buffer)
-    const fileUrl = `/uploads/${filename}`
+    const fileUrl = `/uploads/${filename}`;
 
-    // Update Database Status
-    await db.nutritionist.update({
-      where: { userId: parseInt(session.userId) },
+    // ============================================================
+    // 4. UPDATE DATABASE
+    // ============================================================
+    await prisma.nutritionist.update({
+      where: { userId: userId },
       data: {
         kndi_document_url: fileUrl,
-        verification_status: "submitted"
-      }
-    })
+        verification_status: "submitted",
+        is_verified: false,
+      },
+    });
 
-    return NextResponse.json({ success: true, url: fileUrl })
+    return NextResponse.json({ success: true, url: fileUrl });
 
-  } catch (error) {
-    console.error("Upload error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  } catch (error: any) {
+    console.error("Verification Route Crash:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error: " + error.message }, 
+      { status: 500 }
+    );
   }
 }

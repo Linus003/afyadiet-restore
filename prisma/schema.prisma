@@ -9,13 +9,18 @@ datasource db {
 
 // 1. User Model
 model User {
-  id            Int      @id @default(autoincrement())
-  name          String   @map("full_name") @db.VarChar(255)
-  email         String   @unique @db.VarChar(255)
-  password_hash String   @db.Text
-  role          String   @db.VarChar(50)
-  avatar_url    String?  @db.Text
-  created_at    DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  name           String   @map("full_name") @db.VarChar(255)
+  email          String   @unique @db.VarChar(255)
+  password_hash  String   @db.Text
+  role           String   @db.VarChar(50)
+  avatar_url     String?  @db.Text
+  
+  // ➕ Verification Fields
+  email_verified     DateTime? // If null, they are not verified
+  verification_token String?   @db.Text // Stores the unique code
+  
+  created_at     DateTime @default(now())
 
   nutritionistProfile Nutritionist?
   clientProfile       ClientProfile?
@@ -29,30 +34,33 @@ model User {
   @@map("users")
 }
 
-// 2. Nutritionist Model (UPDATED WITH VERIFICATION FIELDS)
+// 2. Nutritionist Model
 model Nutritionist {
-  id                Int      @id @default(autoincrement())
-  userId            Int      @unique @map("user_id")
-  specialty         String   @map("specializations") @db.VarChar(255)
-  bio               String?  @db.Text
-  experience_years  Int      @default(0)
-  hourly_rate       Decimal  @db.Decimal(10, 2)
-  rating            Decimal  @default(5.0) @db.Decimal(3, 2)
+  id                 Int      @id @default(autoincrement())
+  userId             Int      @unique @map("user_id")
+  specialty          String   @map("specializations") @db.VarChar(255)
+  bio                String?  @db.Text
+  experience_years   Int      @default(0)
+  hourly_rate        Decimal  @db.Decimal(10, 2)
+  rating             Decimal  @default(5.0) @db.Decimal(3, 2)
+  
+  // ➕ NEW FIELD: Location for filtering on Homepage
+  county             String?  @db.VarChar(50) 
   
   // --- Verification Fields ---
-  is_verified         Boolean  @default(false)
-  verification_status String   @default("pending") @db.VarChar(20) // pending, submitted, verified, rejected
-  kndi_document_url   String?  @db.Text
+  is_verified        Boolean  @default(false)
+  verification_status String  @default("pending") @db.VarChar(20)
+  kndi_document_url  String?  @db.Text
+  license_expires_at DateTime?
   // ---------------------------
-  license_expires_at  DateTime?
 
-  total_reviews     Int      @default(0)
-  certifications    String?  @db.Text
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  total_reviews      Int      @default(0)
+  certifications     String?  @db.Text
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
 
-  user              User     @relation(fields: [userId], references: [id])
-  availability      AvailabilitySlot[]
+  user               User     @relation(fields: [userId], references: [id])
+  availability       AvailabilitySlot[]
 
   @@map("nutritionist_profiles")
 }
@@ -76,22 +84,27 @@ model ClientProfile {
 
 // 4. Appointment Model
 model Appointment {
-  id               Int      @id @default(autoincrement())
-  client_id        Int
-  nutritionist_id  Int
-  scheduled_at     DateTime
-  duration_minutes Int      @default(60)
-  price            Decimal  @db.Decimal(10, 2)
-  notes            String?  @db.Text
-  status           String   @default("pending") @db.VarChar(50)
-// --- NEW FIELD ---
-  meeting_link     String?  @db.Text  // For Google Meet / Zoom links
-  // -----------------
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+  id                   Int      @id @default(autoincrement())
+  client_id            Int
+  nutritionist_id      Int
+  scheduled_at         DateTime
+  duration_minutes     Int      @default(60)
+  price                Decimal  @db.Decimal(10, 2)
+  notes                String?  @db.Text
+  status               String   @default("pending") @db.VarChar(50)
+  
+  // --- Meeting Link ---
+  meeting_link         String?  @db.Text 
+  
+  // --- Payment Tracking Fields ---
+  mpesa_checkout_id    String?  @map("checkout_request_id") @db.VarChar(255)
+  mpesa_receipt_number String?  @db.VarChar(255)
+  
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
 
-  client           User     @relation("ClientAppointments", fields: [client_id], references: [id])
-  nutritionist     User     @relation("NutriAppointments", fields: [nutritionist_id], references: [id])
+  client               User     @relation("ClientAppointments", fields: [client_id], references: [id])
+  nutritionist         User     @relation("NutriAppointments", fields: [nutritionist_id], references: [id])
 
   @@map("appointments")
 }
@@ -140,4 +153,80 @@ model AvailabilitySlot {
   nutritionist    Nutritionist @relation(fields: [nutritionist_id], references: [userId])
 
   @@map("availability_slots")
+}
+
+// 8. Site Settings (Legacy) - Keeping for backup/backward compatibility if needed
+model SiteSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique @db.VarChar(50)  // e.g. "mission_statement"
+  value     String?  @db.Text                 // The actual text content
+  updatedAt DateTime @updatedAt
+  
+  @@map("site_settings")
+}
+
+// 9. Media Library (For managing uploaded images/files)
+model MediaFile {
+  id        String   @id @default(uuid())
+  filename  String
+  url       String   // e.g., "/uploads/hero-image.jpg"
+  mimeType  String   // e.g., "image/jpeg"
+  size      Int      // size in bytes
+  createdAt DateTime @default(now())
+
+  @@map("media_files")
+}
+
+// 10. Global Settings (Enhanced for CMS)
+model GlobalSettings {
+  id              Int      @id @default(autoincrement())
+  siteName        String   @default("AfyaDiet Solutions")
+  supportEmail    String   @default("support@afyadietsolutions.co.ke")
+  phoneNumber     String?
+  
+  // Dynamic Images (URLs from Media Library or external)
+  faviconUrl      String?  
+  landingHeroImage String? 
+  logoUrl         String?  
+
+  primaryColor    String   @default("#16a34a") 
+  maintenanceMode Boolean  @default(false)
+  
+  // Stores the navigation links: [{ label: "Home", href: "/" }]
+  mainMenu        Json?    
+
+  updatedAt       DateTime @updatedAt
+}
+
+// 11. Payment Configurations (ERP Feature)
+model PaymentConfig {
+  id          String   @id @default(uuid())
+  name        String   // e.g. "M-Pesa Paybill", "Stripe"
+  type        String   // "MPESA", "CARD", "PAYPAL"
+  isActive    Boolean  @default(true)
+  credentials Json     // Encrypted credentials (e.g., Paybill number, API keys)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// 12. Dynamic Pages (CMS)
+model DynamicPage {
+  id          String   @id @default(uuid())
+  slug        String   @unique 
+  title       String
+  description String?  
+  isPublished Boolean  @default(false)
+  sections    PageSection[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PageSection {
+  id            String      @id @default(uuid())
+  pageId        String
+  page          DynamicPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type          String      // "HERO", "TEXT", "FEATURES", "FAQ", "IMAGE_FULL"
+  order         Int         @default(0)
+  content       Json        
+  createdAt     DateTime    @default(now())
 }

@@ -1,54 +1,53 @@
-import { createUser, getUserByEmail } from "@/lib/auth"
-import { createSession, setSessionCookie } from "@/lib/session"
-import { type NextRequest, NextResponse } from "next/server"
+import { db } from "@/lib/db"
+import { NextResponse } from "next/server"
+import bcrypt from "bcrypt"
+import crypto from "crypto"
+import { sendVerificationEmail } from "@/lib/mail"
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { email, password, fullName, role } = await request.json()
+    const { fullName, email, password, role } = await req.json()
 
-    // Validation
     if (!email || !password || !fullName || !role) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 })
     }
 
-    if (password.length < 8) {
-      return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 })
-    }
-
-    // Check if user exists
-    const existingUser = await getUserByEmail(email)
+    const existingUser = await db.user.findUnique({ where: { email } })
     if (existingUser) {
-      return NextResponse.json({ error: "Email already registered" }, { status: 409 })
+      return NextResponse.json({ error: "Email already in use" }, { status: 400 })
     }
 
-    // Create user
-    const user = await createUser(email, password, fullName, role)
+    const hashedPassword = await bcrypt.hash(password, 10)
+    
+    // Generate a random token
+    const verificationToken = crypto.randomBytes(32).toString("hex")
 
-    // Create session
-    const token = await createSession({
-      // 💡 Fix 1: Convert ID to string
-      userId: user.id.toString(),
-      email: user.email,
-      // 💡 Fix 2: Cast role to specific union type
-      role: user.role as "client" | "nutritionist" | "admin",
+    await db.user.create({
+      data: {
+        name: fullName,
+        email,
+        password_hash: hashedPassword,
+        role,
+        verification_token: verificationToken,
+        email_verified: null // Null means not verified
+      },
     })
 
-    await setSessionCookie(token)
+    // Send the email (don't await it to keep response fast)
+    try {
+        await sendVerificationEmail(email, verificationToken)
+    } catch (emailError) {
+        console.error("Failed to send email:", emailError)
+        // We still return success for signup, user can request resend later if needed
+    }
 
-    return NextResponse.json(
-      {
-        user: {
-          id: user.id,
-          email: user.email,
-          // 💡 Fix 3: Use 'name' instead of 'full_name' to match your schema
-          fullName: user.name, 
-          role: user.role,
-        },
-      },
-      { status: 201 },
-    )
+    return NextResponse.json({ 
+      success: true, 
+      message: "Account created! Please check your email to verify." 
+    })
+
   } catch (error) {
-    console.error("[v0] Signup error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Signup error:", error)
+    return NextResponse.json({ error: "Server error" }, { status: 500 })
   }
 }

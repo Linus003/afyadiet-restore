@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/client/layout,_N_T_/client/meal-plans/layout,_N_T_/client/meal-plans/page,_N_T_/client/meal-plans"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/client/meal-plans/__PAGE__",
+    "/client/meal-plans",
+    "/client",
+    "/_index",
+    "/_head"
+  ]
+}
