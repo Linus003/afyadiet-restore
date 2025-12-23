@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 1. Ignore TypeScript Errors
+  // 1. Ignore TypeScript Errors during build
   typescript: {
     ignoreBuildErrors: true,
   },
-  // 2. Ignore ESLint Errors
+  // 2. Ignore ESLint Errors during build
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -16,4 +16,5 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+// 👇 THIS IS THE FIX: Use 'export default' instead of 'module.exports'
+export default nextConfig;
