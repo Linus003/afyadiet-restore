@@ -29,7 +29,8 @@ export async function GET() {
       select: { client_id: true }
     })
 
-    const clientIds = distinctClientIds.map(a => a.client_id)
+    // FIX: Added ": any" to 'a' to solve the build error
+    const clientIds = distinctClientIds.map((a: any) => a.client_id)
     
     const clients = await db.user.findMany({
       where: { id: { in: clientIds } },
