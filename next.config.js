@@ -1,15 +1,14 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  // 1. Ignore TypeScript Errors during build
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // 1. Ignore TypeScript Errors
   typescript: {
     ignoreBuildErrors: true,
   },
-  // 2. Ignore ESLint Errors during build
+  // 2. Ignore ESLint Errors
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // 3. (Optional) Keep your existing config if you had any
+  // 3. Keep your server actions limit
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb',
@@ -17,4 +16,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
