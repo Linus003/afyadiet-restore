@@ -9,10 +9,9 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // 💡 FIX: Convert the session.userId (string) to a number
+    // Convert the session.userId (string) to a number
     const nutritionistId = parseInt(session.userId, 10);
 
-    // Safety check to ensure the ID is valid
     if (isNaN(nutritionistId)) {
         return NextResponse.json({ error: "Invalid User ID" }, { status: 400 })
     }
@@ -20,8 +19,8 @@ export async function GET() {
     // Fetch completed sessions
     const history = await db.appointment.findMany({
       where: {
-        nutritionist_id: nutritionistId, // Use the numeric ID here
-        status: 'completed' // Only show earned money
+        nutritionist_id: nutritionistId,
+        status: 'completed'
       },
       include: {
         client: { select: { name: true, email: true } }
@@ -29,24 +28,25 @@ export async function GET() {
       orderBy: { scheduled_at: 'desc' }
     })
 
-    // Calculate Total
-    const totalEarned = history.reduce((sum, item) => sum + Number(item.price), 0)
+    // FIX 1: Explicit types for reduce
+    const totalEarned = history.reduce((sum: number, item: any) => sum + Number(item.price), 0)
 
     return NextResponse.json({ 
-      history: history.map(item => ({
+      // FIX 2: Explicit type "any" added here to fix the build error
+      history: history.map((item: any) => ({
         id: item.id,
         date: item.scheduled_at,
         clientName: item.client.name,
         duration: `${item.duration_minutes} mins`,
-        amount: Number(item.price), // KSh
-        platformFee: Number(item.price) * 0.10, // Example 10% fee log
+        amount: Number(item.price),
+        platformFee: Number(item.price) * 0.10,
         netEarnings: Number(item.price) * 0.90
       })),
       totalEarned
     })
 
   } catch (error) {
-    console.error("Earnings history error:", error); // Helpful for debugging
+    console.error("Earnings history error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

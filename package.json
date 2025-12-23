@@ -2,9 +2,15 @@
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
+<<<<<<< HEAD
   "type": "module",
   "scripts": {
     "build": "next build",
+=======
+"type": "module",
+ "scripts": {
+    "build": "npx prisma generate && next build",
+>>>>>>> 43524b96f63ead8f397f229af3a55f9ffc26a3a3
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start"
